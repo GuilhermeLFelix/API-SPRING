@@ -56,12 +56,19 @@ public class ProdutoResource {
 	}
 		
 	@DeleteMapping(path="/{codigo}")
-	public ResponseEntity<Optional<Produto>> deleteByCodigo(@PathVariable Integer codigo){
+	public ResponseEntity<Optional<Produto>> deleteByCodigo(@PathVariable Integer codigo) throws Exception{
 		try {
-			produtoRepository.deleteById(codigo);
-			return new ResponseEntity<Optional<Produto>>(HttpStatus.OK);
-		} catch (NoSuchElementException exc) {
-			return new ResponseEntity<Optional<Produto>>(HttpStatus.NOT_FOUND);
+			
+			Optional<Produto> produto;
+			produto = produtoRepository.findById(codigo);
+				
+			if(!produto.isEmpty()) {
+				produtoRepository.deleteById(codigo);
+				return new ResponseEntity<Optional<Produto>>(produto, HttpStatus.OK);
+			}
+			else
+				throw new Exception();
+			
 		} catch (Exception exc) {
 			return new ResponseEntity<Optional<Produto>>(HttpStatus.BAD_REQUEST);
 		}
